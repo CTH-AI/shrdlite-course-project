@@ -42,16 +42,70 @@ var Interpreter;
     // private functions
     function interpretCommand(cmd, state) {
         // This returns a dummy interpretation involving two random objects in the world
-        var objs = Array.prototype.concat.apply([], state.stacks);
+        /*var objs = Array.prototype.concat.apply([], state.stacks);
         var a = objs[getRandomInt(objs.length)];
-        var b = objs[getRandomInt(objs.length)];
+        var b = objs[getRandomInt(objs.length)]; */
+
+        //Check if start object is in the world
+        if (!isInState(cmd['ent']['obj'], state)) {
+            console.log(cmd + "Start object not in the world")
+            return [];
+        }
+        //Check if goal is in the world
+        if (!isInState(cdm['loc']['ent']['obj'], state)) {
+            console.log(obj.goa)
+            return [];
+        }
+        //Check if the move is physical possible
+        if (!isAllowed(obj)) {
+            return [];
+        }
+        
         var intprt = [[
-                { pol: true, rel: "ontop", args: [a, "floor"] },
-                { pol: true, rel: "holding", args: [b] }
-            ]];
+            { pol: true, rel: "ontop", args: [a, "floor"] },
+            { pol: true, rel: "holding", args: [b] }
+        ]];
         return intprt;
+        }
+
     }
     function getRandomInt(max) {
         return Math.floor(Math.random() * max);
     }
+    // Check if an object is in the state
+    // obj.[size, color, form]
+    function isInState(obj, state) {
+        if (obj in state.stacks) {
+            return true
+        }
+        else {
+            return false;
+        }        
+    }
+    function isAllowed(obj) {
+        
+    }
 })(Interpreter || (Interpreter = {}));
+//put the white ball that is in a box on the floor:
+var example1 = 
+{cmd: "move",
+  ent: {quant: "the",
+        obj: {obj: {size: null, color: "white", form: "ball"},
+              loc: {rel: "inside",
+                    ent: {quant: "any",
+                          obj: {size: null, color: null, form: "box"}}}}},
+  loc: {rel: "ontop",
+        ent: {quant: "the",
+              obj: {size: null, color: null, form: "floor"}}}};
+
+//put the white ball in a box that is on the floor:
+var example2 = 
+{cmd: "move",
+  ent: {quant: "the",
+        obj: {size: null, color: "white", form: "ball"}},
+  loc: {rel: "inside",
+        ent: {quant: "any",
+              obj: {obj: {size: null, color: null, form: "box"},
+                    loc: {rel: "ontop",
+                          ent: {quant: "the",
+                                obj: {size: null, color: null, form: "floor"}}}}}}}
